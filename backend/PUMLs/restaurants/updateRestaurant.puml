@@ -1,0 +1,27 @@
+@startuml
+
+header Bing Resy Sequence Diagram
+footer Page %page% of %lastpage%
+title "Update Restaurants (PUT)"
+
+participant "client" as client
+participant "<<JavaScript>>\nserver" as server
+participant "<<Router>>\nrestaurants" as restaurantsRouter
+participant "<<Controller>>\nrestaurants" as restaurantsController
+participant "<<Model>>\nrestaurants" as restaurantsModel
+database "<<MongoDB>>\nrestaurants" as restaurantsDatabase
+
+client -> server ++: req.put("/api/v1/restaurant/:id")
+server -> restaurantsRouter ++: app.use("/api/v1/restaurants",restaurantRouter)
+restaurantsRouter -> restaurantsController ++: updateRestaurant()
+alt isn't admin
+    restaurantsController -> client ++: response status 400
+else is admin
+    restaurantsController -> restaurantsModel ++: Restaurant.findById(req.params.id).populate(populateQuery)
+    restaurantsModel -> restaurantsDatabase ++:RestaurantSchema
+    restaurantsDatabase -> restaurantsModel --:restaurants
+    restaurantsModel -> restaurantsController --:restaurants
+    restaurantsController -> client ++:response
+end
+
+@enduml

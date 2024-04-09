@@ -1,0 +1,23 @@
+@startuml
+
+header Bing Resy Sequence Diagram
+footer Page %page% of %lastpage%
+title "Get Reservations (GET)"
+
+participant "client" as client
+participant "<<JavaScript>>\nserver" as server
+participant "<<Router>>\nreservations" as reservationsRouter
+participant "<<Controller>>\nreservations" as reservationsController
+participant "<<Model>>\nreservations" as reservationsModel
+database "<<MongoDB>>\nreservations" as reservationsDatabase
+
+client -> server ++: req.get("/api/v1/reservations")
+server -> reservationsRouter ++: app.use("/api/v1/reservations",restaurantRouter)
+reservationsRouter -> reservationsController ++: getReservations()
+reservationsController -> reservationsModel ++: Reservation.find(filterQuery)
+reservationsModel -> reservationsDatabase ++:Reservationschema
+reservationsDatabase -> reservationsModel --:reservations
+reservationsModel -> reservationsController --:reservations
+reservationsController -> client --:response
+
+@enduml

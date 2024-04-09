@@ -1,0 +1,39 @@
+@startuml
+
+header Bing Resy Sequence Diagram
+footer Page %page% of %lastpage%
+title "Create Reservation (POST)"
+
+participant "client" as client
+participant "<<JavaScript>>\nserver" as server
+participant "<<Router>>\nreservations" as reservationsRouter
+participant "<<Controller>>\nreservations" as reservationsController
+participant "<<Model>>\nreservations" as reservationsModel
+database "<<MongoDB>>\nreservations" as reservationsDatabase
+participant "<<Model>>\nrestaurants" as restaurantsModel
+database "<<MongoDB>>\nrestaurants" as restaurantsDatabase
+
+client -> server ++: req.post("/api/v1/reservations")
+server -> reservationsRouter ++: app.use("/api/v1/reservations",restaurantRouter)
+reservationsRouter -> reservationsController ++: createReservation()
+reservationsController -> reservationsModel ++: Reservation.countDocuments(Reservation.find({reservorId})
+reservationsModel -> reservationsDatabase ++:Reservationschema
+reservationsDatabase -> reservationsModel --:reservation
+reservationsModel -> reservationsController --: existingReservationsCount
+alt existingReservationsCount>=3 AND role isn't admin
+    reservationsController -> client ++:response status 400(exceed limits)
+else else
+    alt restaurant name is inputed instead of restaurantId
+        reservationsController -> restaurantsModel ++:Restaurant.findOne({name:req.body.restaurantName}).select("id")
+        restaurantsModel -> restaurantsDatabase ++: RestaurantSchema
+        restaurantsDatabase -> restaurantsModel --: restaurant
+        restaurantsModel -> reservationsController --: restaurantId
+    end
+    reservationsController -> reservationsModel ++: Reservation.create({restaurantId,reservorId,reservationPeriod,reservationDate})
+    reservationsModel -> reservationsDatabase ++: ReservationSchema
+    reservationsDatabase -> reservationsModel --: reservation
+    reservationsModel -> reservationsController --: reservation
+    reservationsController -> client ++:response
+end
+
+@enduml

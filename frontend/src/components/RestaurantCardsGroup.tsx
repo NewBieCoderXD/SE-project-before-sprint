@@ -1,0 +1,28 @@
+"use client"
+import { Restaurant } from "../../interface"
+import RestaurantCard from "./RestaurantCard"
+
+export default function({
+    index,
+    restaurants,
+    tag,
+    currentIndex
+}:{
+    index: number,
+    restaurants?: Restaurant[]|undefined,
+    tag: string,
+    currentIndex: number
+}){
+    console.log("restaurants",currentIndex,restaurants)
+    return (
+        <div className="flex justify-evenly align-center md:gap-1 sm:gap-0">
+            {
+                restaurants?.map((restaurant)=>{
+                    return (
+                        <RestaurantCard key={restaurant.id} restaurant={restaurant}></RestaurantCard>
+                    )
+                })
+            }
+        </div>
+    )
+}

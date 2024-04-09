@@ -1,0 +1,26 @@
+@startuml
+
+header Bing Resy Sequence Diagram
+footer Page %page% of %lastpage%
+title "Delete Reservation (DELETE)"
+
+participant "client" as client
+participant "<<JavaScript>>\nserver" as server
+participant "<<Router>>\nreservations" as reservationsRouter
+participant "<<Controller>>\nreservations" as reservationsController
+participant "<<Model>>\nreservations" as reservationsModel
+database "<<MongoDB>>\nreservations" as reservationsDatabase
+
+client -> server ++: req.delete("/api/v1/reservations/:id")
+server -> reservationsRouter ++: app.use("/api/v1/reservations",restaurantRouter)
+reservationsRouter -> reservationsController ++: deleteReservation()
+reservationsController -> reservationsModel ++: Reservation.findById(req.params.id)
+reservationsModel -> reservationsDatabase ++:Reservationschema
+reservationsDatabase -> reservationsModel --:reservation
+reservationsModel -> reservationsController --: reservation
+reservationsController -> reservationsModel ++: reservation.deleteOne()
+reservationsModel -> reservationsDatabase ++: Reservationschema
+reservationsDatabase -> reservationsModel --: delete status
+reservationsController -> client --:response
+
+@enduml

@@ -1,0 +1,19 @@
+{
+  "name": "bing-resy",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "scripts":{
+    "dev":"concurrently --kill-others 'bun run dev:backend' 'bun run dev:frontend'",
+    "dev:backend": "cd ./backend && bun run dev",
+    "dev:frontend": "cd ./frontend && bun run dev"
+  }
+}
